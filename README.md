@@ -1,6 +1,10 @@
-F4nalyser (pronounce "fanalyser"):
+F4nalyser
+======
 
-The aim of this project is to provide a serial sniffer/logic analyser using the stm32F4-discovery board.
 
-Explicative diagram:
+The aim of the F4nalyser (pronounce "fanalyser") project is to provide a serial sniffer/logic analyser using the stm32F4-discovery board.
+
+Explicative diagram
+-------------------
+
 ![](./global_diagram.jpg)
