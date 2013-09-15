@@ -11,7 +11,7 @@
 * Return         : None
 * Attention      : None
 *******************************************************************************/
-void Init_SDCard();
+void Init_SDCard(void);
 
 /*******************************************************************************
 * Function Name  : writeHeader
@@ -21,7 +21,7 @@ void Init_SDCard();
 * Return         : None
 * Attention      : None
 *******************************************************************************/
-void writeHeader(char header[], char pathToFile[]);
+void writeHeader(const char header[], const char pathToFile[]);
 
 /*******************************************************************************
 * Function Name  : writeDynamicTabDate
@@ -31,6 +31,6 @@ void writeHeader(char header[], char pathToFile[]);
 * Return         : write error (1=error,0=no error)
 * Attention      : None
 *******************************************************************************/
-unsigned char writeDynamicTabData(char* dynamicTab, int nbOfElements, char pathToFile[]);
+unsigned char writeDynamicTabData(char* dynamicTab, int nbOfElements, const char pathToFile[]);
 
 #endif

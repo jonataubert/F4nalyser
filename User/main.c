@@ -3,18 +3,13 @@
 //******************************************************************************
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "stm32f4xx.h"
-
 #include "stm32f4_discovery.h"
 #include "stm32f4_discovery_sdio_sd.h"
 #include "fonctionsInit.h"
 #include "fonctionsUsart.h"
 #include "itData.h"
 #include "fifo.h"
-
 #include "writeToFile.h"
 
 
@@ -75,8 +70,8 @@ int main(void)
 				GPIO_SetBits(GPIOD, GPIO_Pin_12); 			//Turn on green led
 				led_gr_blink = 1;							//Activate the blink mod in an interruption
 	
-				writeHeader(head_txt2[], file2_path);		//header for the usart2 file
-				writeHeader(head_txt3[], file3_path);		//header for the usart3 file
+				writeHeader(head_txt2, file2_path);		//header for the usart2 file
+				writeHeader(head_txt3, file3_path);		//header for the usart3 file
 
 				etatBtBleu = RUN;
 			break;

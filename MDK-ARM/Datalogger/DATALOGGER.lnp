@@ -20,6 +20,7 @@
 ".\datalogger\fonctionsinit.o"
 ".\datalogger\itdata.o"
 ".\datalogger\fifo.o"
+".\datalogger\writetofile.o"
 --library_type=microlib --strict --scatter ".\Datalogger\DATALOGGER.sct"
 --summary_stderr --info summarysizes --map --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

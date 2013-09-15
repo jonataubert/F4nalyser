@@ -2,17 +2,20 @@
 
 #include "ff.h"
 #include "diskio.h"
+#include "stm32f4xx.h"
+
+#include <stdlib.h>
+#include <string.h>
 
 #define DBG //Debug/developping mode
 
 #ifdef DBG
-    #include <stdio.h>
-    #include "fonctionsUsart.h"
+		#include <stdio.h>
 #endif
 
-void Init_SDCard()
+void Init_SDCard(void)
 {
-    FRESULT res;        // File function return code (if everything is ok)  
+    FRESULT res;        // File function return code (if everything is ok or error code)  
     FATFS fs32;         // File system object structure
 
     memset(&fs32,0, sizeof(FATFS));             //initialise l'objet fs32 avec des 0
@@ -22,13 +25,13 @@ void Init_SDCard()
         if (res != FR_OK)
             printf("res = %d f_mount\n", res);
         else
-            USART_puts(USART2,"SD mounted\r\n");
+            printf("SD mounted\r\n");
     #endif
 }
 
 void writeHeader(char header[], char pathToFile[])
 {
-    FRESULT res;        // File function return code (if everything is ok)   
+    FRESULT res;        // File function return code (if everything is ok or error code)   
     FILINFO fInfo;      // File informations
     FIL myFile;         // File object structure
 //  DIR dir;            // Directory object structure
@@ -45,13 +48,13 @@ void writeHeader(char header[], char pathToFile[])
         if (res != FR_OK)
             printf("res = %d f_open %s\n", res, pathToFile);
         else
-            USART_puts(USART2,"File %s created/opened\r\n", pathToFile);
+            printf("File %s created/opened\r\n", pathToFile);
     #endif
     
     res = f_stat(pathToFile, &fInfo);                                           //get file's info
 
     #ifdef DBG
-        printf("end of file %d \n", myFile.fsize);
+        printf("end of file %d \n", (unsigned int)myFile.fsize);
     #endif
 
     res = f_lseek(&myFile, fInfo.fsize);                                        //go to the end of the file
@@ -62,7 +65,7 @@ void writeHeader(char header[], char pathToFile[])
         if (res != FR_OK)
             printf("res = %d File write problem %s\n", res, pathToFile);
         else
-            USART_puts(USART2,"File %s written\r\n", pathToFile);
+            printf("File %s written\r\n", pathToFile);
     #endif
     
     res = f_close(&myFile);                                                     //close the file
@@ -70,7 +73,7 @@ void writeHeader(char header[], char pathToFile[])
 
 unsigned char writeDynamicTabData(char* dynamicTab, int nbOfElements, char pathToFile[])
 {
-    FRESULT res;        // File function return code (if everything is ok)   
+    FRESULT res;        // File function return code (if everything is ok or error code)   
     FILINFO fInfo;      // File informations
     FIL myFile;         // File object structure
 //  DIR dir;            // Directory object structure
@@ -92,14 +95,14 @@ unsigned char writeDynamicTabData(char* dynamicTab, int nbOfElements, char pathT
 
         error=0;
         #ifdef DBG              
-            USART_puts(USART2,"File %s written ok\r\n", pathToFile);
+            printf("File %s written ok\r\n", pathToFile);
         #endif
     }
     else
     {
         error=1;
         #ifdef DBG
-            USART_puts(USART2,"File %s write problem\r\n", pathToFile);
+            printf("File %s write problem\r\n", pathToFile);
         #endif
     }
 

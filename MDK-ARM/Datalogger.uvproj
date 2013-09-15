@@ -517,6 +517,11 @@
               <FileType>1</FileType>
               <FilePath>..\User\fifo.c</FilePath>
             </File>
+            <File>
+              <FileName>writeToFile.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\User\writeToFile.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>

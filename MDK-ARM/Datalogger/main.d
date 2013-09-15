@@ -1,7 +1,5 @@
 .\datalogger\main.o: ..\User\main.c
 .\datalogger\main.o: C:\Keil\ARM\ARMCC\bin\..\include\stdio.h
-.\datalogger\main.o: C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h
-.\datalogger\main.o: C:\Keil\ARM\ARMCC\bin\..\include\string.h
 .\datalogger\main.o: ..\..\Library_stm\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h
 .\datalogger\main.o: ..\..\Library_stm\CMSIS\Include\core_cm4.h
 .\datalogger\main.o: C:\Keil\ARM\ARMCC\bin\..\include\stdint.h
@@ -43,8 +41,5 @@
 .\datalogger\main.o: ..\User\fonctionsUsart.h
 .\datalogger\main.o: ..\User\itData.h
 .\datalogger\main.o: ..\User\fifo.h
-.\datalogger\main.o: ..\ff.h
-.\datalogger\main.o: ..\integer.h
-.\datalogger\main.o: ..\ffconf.h
-.\datalogger\main.o: ..\diskio.h
+.\datalogger\main.o: ..\User\writeToFile.h
 .\datalogger\main.o: C:\Keil\ARM\ARMCC\bin\..\include\rt_misc.h
