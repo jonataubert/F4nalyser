@@ -8,3 +8,7 @@ Explicative diagram
 -------------------
 
 ![](./global_diagram.jpg)
+
+Wiring
+------
+[See wiring.txt](./wiring.txt)
