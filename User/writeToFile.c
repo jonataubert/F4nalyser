@@ -5,14 +5,34 @@
 
 #define DBG //Debug/developping mode
 
+#ifdef DBG
+    #include <stdio.h>
+    #include "fonctionsUsart.h"
+#endif
+
+void Init_SDCard()
+{
+    FRESULT res;        // File function return code (if everything is ok)  
+    FATFS fs32;         // File system object structure
+
+    memset(&fs32,0, sizeof(FATFS));             //initialise l'objet fs32 avec des 0
+    res = f_mount(0, &fs32);                    //Monte la carte SD (device 0)
+
+    #ifdef DBG
+        if (res != FR_OK)
+            printf("res = %d f_mount\n", res);
+        else
+            USART_puts(USART2,"SD mounted\r\n");
+    #endif
+}
 
 void writeHeader(char header[], char pathToFile[])
 {
-    FRESULT res;        // File function return code (si exception ou ok)   
+    FRESULT res;        // File function return code (if everything is ok)   
     FILINFO fInfo;      // File informations
     FIL myFile;         // File object structure
 //  DIR dir;            // Directory object structure
-    FATFS fs32;         // File system object structure
+//  FATFS fs32;         // File system object structure
     UINT BytesWritten;  // Informations about the number of byte written into the file
 
 
@@ -50,11 +70,11 @@ void writeHeader(char header[], char pathToFile[])
 
 unsigned char writeDynamicTabData(char* dynamicTab, int nbOfElements, char pathToFile[])
 {
-    FRESULT res;        // File function return code (si exception ou ok)   
+    FRESULT res;        // File function return code (if everything is ok)   
     FILINFO fInfo;      // File informations
     FIL myFile;         // File object structure
 //  DIR dir;            // Directory object structure
-    FATFS fs32;         // File system object structure
+//  FATFS fs32;         // File system object structure
     UINT BytesWritten;  // Informations about the number of byte written into the file
 
     unsigned char error = 0;

@@ -1,5 +1,17 @@
 /* === SD card write file functions header === */
 
+#ifndef DEF_SDWRITE
+#define DEF_SDWRITE
+
+/*******************************************************************************
+* Function Name  : InitSDCard
+* Description    : mount the sd card and set the use of fat32 format
+* Input          : none
+* Output         : None
+* Return         : None
+* Attention      : None
+*******************************************************************************/
+void Init_SDCard();
 
 /*******************************************************************************
 * Function Name  : writeHeader
@@ -20,3 +32,5 @@ void writeHeader(char header[], char pathToFile[]);
 * Attention      : None
 *******************************************************************************/
 unsigned char writeDynamicTabData(char* dynamicTab, int nbOfElements, char pathToFile[]);
+
+#endif

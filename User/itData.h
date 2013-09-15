@@ -4,12 +4,13 @@
 
 
 //Nombre de caracteres à stocker avant de les ecrire sur la carte SD
-#define 	NB_CARACT_STOCK	1000
+#define NB_CARACT_STOCK	1000
 
 //Etats bouton bleu
-#define	STOP		0
-#define	START		1
-#define	RUN		3
+#define	STOP        0
+#define	START       1
+#define WAIT        2
+#define	RUN         3
 
 extern unsigned char etatBtBleu;
 extern unsigned char led_gr_blink;

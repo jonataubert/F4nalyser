@@ -15,9 +15,7 @@
 #include "itData.h"
 #include "fifo.h"
 
-#include "ff.h"
-#include "diskio.h"
-//#include "stdarg.h"
+#include "writeToFile.h"
 
 
 #define DBG
@@ -53,233 +51,71 @@ int main(void)
        To reconfigure the default setting of SystemInit() function, refer to
        system_stm32f4xx.c file
      */
-	//================ Variables locales ===================//
-
-	FRESULT res;		// File function return code (si exception ou ok)	
-	FILINFO finf2; 		// Informations du fichier
-	FILINFO finf3; 		// Informations du fichier
-	FIL fil2;		  	// File object structure
-	FIL fil3;		  	// File object structure
-//	DIR dir;		   	// Directory object structure
-	FATFS fs32;		 	// File system object structure
-  	
-	UINT BytesWritten;	//Info sur le nombre de bytes écrits dans le fichier
 	
 	//================= Initialisation pin et interruptions =============================
 
 	GPIO_Configuration();
- 	NVIC_Configuration(); /* Interrupt Config SDIO*/
-	EXTILine0_Config();	// Interrupt PA0
+ 	NVIC_Configuration(); 	/* Interrupt Config SDIO*/
+	EXTILine0_Config();		// Interrupt PA0
 	Timer2_Config();		//Configure timer2 1[s]
 	Init_Uart2(4800);
 	Init_Uart3(4800);
+	Init_SDCard();			//Mount sd card and use fat32 format
 
-	fileUart2 = initialiserFile();
-	fileUart3 = initialiserFile();
-
-  	//========================= Montage de la carte SD ==================================
-	memset(&fs32,0, sizeof(FATFS));	 		//initialise l'objet fs32 avec des 0
-	res = f_mount(0, &fs32);				 	//Monte la carte SD (device 0)
-
-#ifdef DBG
-	if (res != FR_OK)
-		printf("res = %d f_mount\n", res);
-	else
-		USART_puts(USART2,"SD mounted\r\n");
-#endif
-
-
+	fileUart2 = initialiserFile();	//Init fifo pile
+	fileUart3 = initialiserFile();	//Init fifo pile
 
 	
   	while(1) 	/* Infinite loop */
   	{
-	  
-
 		switch(etatBtBleu)
 		{
 			case START:
 				enableUsartIt();
+				GPIO_SetBits(GPIOD, GPIO_Pin_12); 			//Turn on green led
+				led_gr_blink = 1;							//Activate the blink mod in an interruption
+	
+				writeHeader(head_txt2[], file2_path);		//header for the usart2 file
+				writeHeader(head_txt3[], file3_path);		//header for the usart3 file
 
-				GPIO_SetBits(GPIOD, GPIO_Pin_12); 	//on la led verte 
-				led_gr_blink = 1;
-	
-				//============== En-tête fichier 2 ==========================
-				memset(&fil2, 0, sizeof(FIL));			//Initialise l'objet fichier2 
-				memset(&finf2, 0, sizeof(FILINFO));
-	
-				res = f_open(&fil2, file2_path, FA_READ | FA_WRITE | FA_OPEN_ALWAYS);	//ouvre /crée fichier txt à la racine
-				#ifdef DBG
-					if (res != FR_OK)
-						printf("res = %d f_open UART2.TXT\n", res);
-					else
-						USART_puts(USART2,"File UART2.TXT created/opened\r\n");
-				#endif
-				
-				res = f_stat(file2_path, &finf2); 	//get file's info
-				#ifdef DBG
-					printf("end of file %d \n", finf2.fsize);
-				#endif
-				
-				res = f_lseek(&fil2, finf2.fsize);		//Aller à la fin du fichier
-				if (res == FR_OK)
-	 				res = f_write (&fil2, head_txt2, strlen(head_txt2), &BytesWritten);	 //Ecriture en-tête du fichier txt2
-				#ifdef DBG
-					if (res != FR_OK)
-						printf("res = %d Problème écriture fichier UART2\n", res);
-					else
-						USART_puts(USART2,"File UART2.TXT written\r\n");
-				#endif
-				
-				res = f_close(&fil2); // ferme le fichier 
-	
-				//============= En-tête fichier 3 =========================
-				memset(&fil3, 0, sizeof(FIL));			//Initialise l'objet fichier3 
-				memset(&finf3, 0, sizeof(FILINFO));
-	
-				res = f_open(&fil3, file3_path, FA_READ | FA_WRITE | FA_OPEN_ALWAYS);	//ouvre /crée fichier txt à la racine
-				#ifdef DBG
-					if (res != FR_OK)
-						printf("res = %d f_open UART3.TXT\n", res);
-					else
-						USART_puts(USART2,"File UART3.TXT created/opened\r\n");
-				#endif
-				
-				res = f_stat(file3_path, &finf3);	//Obtaining file's infos
-				#ifdef DBG
-					printf("end of file %d \n", finf3.fsize);
-				#endif
-	
-				res = f_lseek(&fil3, finf3.fsize);		//Aller à la fin du fichier
-				if (res == FR_OK)
-	  				res = f_write (&fil3,head_txt3, strlen(head_txt3), &BytesWritten);	 //Ecriture en-tête du fichier txt3
-				#ifdef DBG
-					if (res != FR_OK)
-						printf("res = %d Problème écriture fichier UART3\n", res);
-					else
-						USART_puts(USART2,"File UART3.TXT written\r\n");
-				#endif
-	
-				res = f_close(&fil3); // ferme le fichier3 
 				etatBtBleu = RUN;
 			break;
 	
 			case STOP:
-				disableUsartIt();	
-				led_gr_blink = 0;
-				GPIO_ResetBits(GPIOD, GPIO_Pin_12); 	//green led	off
-
-				//============= Vidage des piles dans la carte SD ===========================================================================
-				GPIO_SetBits(GPIOD, GPIO_Pin_15);		//blue led on
+				disableUsartIt();							//we will read the fifo pile so it's better to inibit usart interrupt
+				led_gr_blink = 0;						
+				GPIO_ResetBits(GPIOD, GPIO_Pin_12); 		//green led	off
+				GPIO_SetBits(GPIOD, GPIO_Pin_15);			//blue led on
 	
-				//============= Enregistre fichier 2 avec le contenu de la file ==============================
-				res = f_open(&fil2, file2_path, FA_READ | FA_WRITE | FA_OPEN_ALWAYS);	//ouvre /crée fichier2 txt à la racine
-				res = f_stat(file2_path, &finf2); 		//get file's info
-				res = f_lseek(&fil2, finf2.fsize);		//Aller à la fin du fichier
-				if (res == FR_OK)
-				{
-					char *tabUart2;	  //tavleau des elements de la file uart2
-//					int i=0;
-					tabUart2 = pullN(fileUart2, nbCaractUart2);
-
-//					printf("\n\r -------\n\r");
-//					for(i=0;i<nbCaractUart2;i++)
-//						printf("%c", tabUart2[i]);
-					
-					res = f_write (&fil2, tabUart2, nbCaractUart2, &BytesWritten);	//Ecriture du stack dans le fichier 2				
-				 	USART_puts(USART2,"File UART2.TXT written ok\r\n");
-					free(tabUart2);
-
-				}
-				else
-				{
-				  	USART_puts(USART2,"File UART2.TXT problème wr\r\n");
-				}
-				res = f_close(&fil2); 	//ferme le fichier 
-
-				//============= Enregistre fichier 3 avec le contenu de la file ==============================
-				
-		  	res = f_open(&fil3, file3_path, FA_READ | FA_WRITE | FA_OPEN_ALWAYS);	//ouvre /crée fichier3 txt à la racine
-				res = f_stat(file3_path, &finf3); 	//get file's info
-				res = f_lseek(&fil3, finf3.fsize);		//Aller à la fin du fichier
-				if (res == FR_OK)
-				{
-					char *tabUart3;	  //tavleau des elements de la file uart3
-					tabUart3 = pullN(fileUart3, nbCaractUart3);
-	 				res = f_write (&fil3, tabUart3, nbCaractUart3, &BytesWritten);	//Ecriture du stack dans le fichier 3				
-				  ///	USART_puts(USART2,"File UART3.TXT written ok\r\n");
-					free(tabUart3);
-				}
-				else
-				{
-				 // 	USART_puts(USART2,"File UART3.TXT problème wr\r\n");
-				}
-				res = f_close(&fil3); 	//ferme le fichier 
+				writeDynamicTabData(pullN(fileUart2, nbCaractUart2), nbCaractUart2, file2_path);			//write all the fifo's uart2 data
+				writeDynamicTabData(pullN(fileUart3, nbCaractUart3), nbCaractUart3, file3_path);			//write all the fifo's uart3 data
 	
-				GPIO_ResetBits(GPIOD, GPIO_Pin_15);		//blue led off
+				GPIO_ResetBits(GPIOD, GPIO_Pin_15);			//blue led off
 
 				nbCaractUart2 = 0;
 				nbCaractUart3 = 0;
-				etatBtBleu=2;
+				etatBtBleu=WAIT;
 	
 			break;
 
 			case RUN:
-				//=========== Ecriture fichier Uart2 carte SD ===============================================
+				//=========== write data when we have NB_CARACT_STOCK into the usart2 fifo pile =============
 				if(flag_fileUart2Ready)
 				{
 					flag_fileUart2Ready=0;
-					
-
-					GPIO_SetBits(GPIOD, GPIO_Pin_15);		//blue led on
-					//============= Enregistre fichier 2 avec le contenu de la file =========================
-		  			res = f_open(&fil2, file2_path, FA_READ | FA_WRITE | FA_OPEN_ALWAYS);	//ouvre /crée fichier2 txt à la racine
-					res = f_stat(file2_path, &finf2); 		//get file's info
-					res = f_lseek(&fil2, finf2.fsize);		//Aller à la fin du fichier
-					if (res == FR_OK)
-					{
-						char *tabUart2;	  //tavleau des elements de la file uart2
-						tabUart2 = pullN(fileUart2, NB_CARACT_STOCK);
-						res = f_write (&fil2, tabUart2, NB_CARACT_STOCK, &BytesWritten);	//Ecriture du stack dans le fichier 2				
-					  	USART_puts(USART2,"File UART2.TXT written ok\r\n");
-						free(tabUart2);
-					}
-					else
-					  	USART_puts(USART2,"File UART2.TXT probleme wr\r\n");
-
-					res = f_close(&fil2); 	//ferme le fichier 
-		  	
+					writeDynamicTabData(pullN(fileUart2, NB_CARACT_STOCK), NB_CARACT_STOCK, file2_path);	//write NB_CARACT_STOCK of uart2 data
 					GPIO_ResetBits(GPIOD, GPIO_Pin_15);		//blue led off
 				}
 				
-				//=========== Ecriture fichier Uart3 carte SD ===============================================
+				//=========== write data when we have NB_CARACT_STOCK into the usart3 fifo pile =============
 				if(flag_fileUart3Ready)
 				{
 					flag_fileUart3Ready = 0;
-					GPIO_SetBits(GPIOD, GPIO_Pin_15);		//blue led on
-					//============= Enregistre fichier 3 avec le contenu de la file ==========================
-		  			res = f_open(&fil3, file3_path, FA_READ | FA_WRITE | FA_OPEN_ALWAYS);	//ouvre /crée fichier3 txt à la racine
-					res = f_stat(file3_path, &finf3); 	//get file's info
-					res = f_lseek(&fil3, finf3.fsize);		//Aller à la fin du fichier
-					if (res == FR_OK)
-					{
-						char *tabUart3;	  //tavleau des elements de la file uart3
-						tabUart3 = pullN(fileUart3, NB_CARACT_STOCK);
-	 					res = f_write (&fil3, tabUart3, NB_CARACT_STOCK, &BytesWritten);	//Ecriture du stack dans le fichier 3				
-					  	USART_puts(USART2,"File UART3.TXT written ok\r\n");
-						free(tabUart3);
-					}
-					else
-					  	USART_puts(USART2,"File UART3.TXT probleme wr\r\n");
-					res = f_close(&fil3); 	//ferme le fichier
+					writeDynamicTabData(pullN(fileUart3, NB_CARACT_STOCK), NB_CARACT_STOCK, file3_path);	//write NB_CARACT_STOCK of uart3 data
 					GPIO_ResetBits(GPIOD, GPIO_Pin_15);		//blue led off 
-
 				}
 			break;
-		}	// */
-
-
-
-		
+		}	
   	} 
 }
 
