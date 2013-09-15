@@ -1,0 +1,39 @@
+*** Creating Trace Output File '.\FATFS\FATFS.tra' Ok.
+### Preparing for ADS-LD.
+### Creating ADS-LD Command Line
+### List of Objects: adding '".\fatfs\misc.o"'
+### List of Objects: adding '".\fatfs\stm32f4xx_exti.o"'
+### List of Objects: adding '".\fatfs\stm32f4xx_gpio.o"'
+### List of Objects: adding '".\fatfs\stm32f4xx_rcc.o"'
+### List of Objects: adding '".\fatfs\stm32f4xx_sdio.o"'
+### List of Objects: adding '".\fatfs\stm32f4xx_syscfg.o"'
+### List of Objects: adding '".\fatfs\stm32f4xx_usart.o"'
+### List of Objects: adding '".\fatfs\stm32f4xx_dma.o"'
+### List of Objects: adding '".\fatfs\stm32f4xx_tim.o"'
+### List of Objects: adding '".\fatfs\startup_stm32f4xx.o"'
+### List of Objects: adding '".\fatfs\diskio.o"'
+### List of Objects: adding '".\fatfs\ff.o"'
+### List of Objects: adding '".\fatfs\stm32f4_discovery_sdio_sd.o"'
+### List of Objects: adding '".\fatfs\stm32f4_discovery.o"'
+### List of Objects: adding '".\fatfs\main.o"'
+### List of Objects: adding '".\fatfs\system_stm32f4xx.o"'
+### List of Objects: adding '".\fatfs\stm32f4xx_it.o"'
+### List of Objects: adding '".\fatfs\fonctionsusart.o"'
+### List of Objects: adding '".\fatfs\fonctionsinit.o"'
+### List of Objects: adding '".\fatfs\itdata.o"'
+### List of Objects: adding '".\fatfs\fifo.o"'
+### ADS-LD Command completed:
+--cpu Cortex-M4 ".\fatfs\misc.o" ".\fatfs\stm32f4xx_exti.o" ".\fatfs\stm32f4xx_gpio.o" ".\fatfs\stm32f4xx_rcc.o" ".\fatfs\stm32f4xx_sdio.o" ".\fatfs\stm32f4xx_syscfg.o" ".\fatfs\stm32f4xx_usart.o" ".\fatfs\stm32f4xx_dma.o" ".\fatfs\stm32f4xx_tim.o" ".\fatfs\startup_stm32f4xx.o" ".\fatfs\diskio.o" ".\fatfs\ff.o" ".\fatfs\stm32f4_discovery_sdio_sd.o" ".\fatfs\stm32f4_discovery.o" ".\fatfs\main.o" ".\fatfs\system_stm32f4xx.o" ".\fatfs\stm32f4xx_it.o" ".\fatfs\fonctionsusart.o" ".\fatfs\fonctionsinit.o" ".\fatfs\itdata.o" ".\fatfs\fifo.o" --library_type=microlib --strict --scatter ".\FATFS\FATFS.sct" 
+--autoat --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
+--info sizes --info totals --info unused --info veneers 
+ --list ".\FATFS\FATFS.map" -o ".\FATFS\FATFS.axf"### Preparing Environment (PrepEnvAds)
+### ADS-LD Output File: '.\FATFS\FATFS.axf'
+### ADS-LD Command File: '.\FATFS\FATFS.lnp'
+### Checking for dirty Components...
+### Creating CmdFile '.\FATFS\FATFS.lnp', Handle=0x00000A00
+### Writing '.lnp' file
+### ADS-LD Command file '.\FATFS\FATFS.lnp' is ready.
+### ADS-LD: About to start ADS-LD Thread.
+### ADS-LD: executed with 0 errors
+### Updating obj list
+### LDADS_file() completed.

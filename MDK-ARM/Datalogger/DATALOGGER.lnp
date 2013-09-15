@@ -1,0 +1,26 @@
+--cpu Cortex-M4
+".\datalogger\misc.o"
+".\datalogger\stm32f4xx_exti.o"
+".\datalogger\stm32f4xx_gpio.o"
+".\datalogger\stm32f4xx_rcc.o"
+".\datalogger\stm32f4xx_sdio.o"
+".\datalogger\stm32f4xx_syscfg.o"
+".\datalogger\stm32f4xx_usart.o"
+".\datalogger\stm32f4xx_dma.o"
+".\datalogger\stm32f4xx_tim.o"
+".\datalogger\startup_stm32f4xx.o"
+".\datalogger\diskio.o"
+".\datalogger\ff.o"
+".\datalogger\stm32f4_discovery_sdio_sd.o"
+".\datalogger\stm32f4_discovery.o"
+".\datalogger\main.o"
+".\datalogger\system_stm32f4xx.o"
+".\datalogger\stm32f4xx_it.o"
+".\datalogger\fonctionsusart.o"
+".\datalogger\fonctionsinit.o"
+".\datalogger\itdata.o"
+".\datalogger\fifo.o"
+--library_type=microlib --strict --scatter ".\Datalogger\DATALOGGER.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Datalogger\DATALOGGER.map" -o .\Datalogger\DATALOGGER.axf
