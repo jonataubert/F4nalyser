@@ -13,9 +13,3 @@ VSS = GND
 PC10 (SCLK) and PC12 (SDIN) potentially conflict with the CS43L22
  
 The CMD, D0, D1, D2, D3 pins should have 33K or 47K pull up resistors.
-
-
-
-UART 2 :
-
-UART 2 :
